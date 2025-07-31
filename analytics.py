@@ -176,7 +176,7 @@ def save_user_data(username, df):
     return path
 
 
-def analyze_user(username, max_tweets=100):
+def analyze_user(username, max_tweets=20):
     print(f"\nAnalyzing @{username}...")
     df = fetch_nitter_stats(username, max_tweets)
     if df is None or df.empty:

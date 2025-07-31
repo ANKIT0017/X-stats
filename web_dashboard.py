@@ -5,6 +5,15 @@ import json
 from collections import defaultdict
 from datetime import datetime
 import numpy as np
+import time
+
+def clean_old_files(directory, age_limit_seconds=3600):  # 1 hour default
+    now = time.time()
+    for fname in os.listdir(directory):
+        fpath = os.path.join(directory, fname)
+        if os.path.isfile(fpath):
+            if now - os.path.getmtime(fpath) > age_limit_seconds:
+                os.remove(fpath)
 
 app = Flask(__name__)
 DATA_DIR = "data"
@@ -36,6 +45,8 @@ def safe_serialize(obj, depth=0):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    clean_old_files(DATA_DIR, age_limit_seconds=3600)    # Delete CSVs older than 1 hr
+    clean_old_files(STATIC_DIR, age_limit_seconds=3600)  # Delete images older than 1 hr
     message = ''
     if request.method == 'POST':
         usernames = request.form.get('usernames', '')
@@ -106,7 +117,7 @@ def user_dashboard(username):
         return render_template('user_dashboard.html',
                              username=username,
                              stats=basic_stats,
-                             recent_tweets=df.head(10).to_dict('records'),
+                             recent_tweets = df[['Datetime', 'Tweet', 'Engagement']].head(10).to_dict('records'),
                              heatmap=heatmap,
                              wordcloud=wordcloud)
                              
