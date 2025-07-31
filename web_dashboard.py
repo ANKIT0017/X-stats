@@ -6,6 +6,15 @@ from collections import defaultdict
 from datetime import datetime
 import numpy as np
 import time
+import os
+
+DATA_DIR = "data"
+STATIC_DIR = "static"
+
+# ✅ Ensure these folders exist even if Git didn't track them
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(STATIC_DIR, exist_ok=True)
+
 
 def clean_old_files(directory, age_limit_seconds=3600):  # 1 hour default
     now = time.time()
