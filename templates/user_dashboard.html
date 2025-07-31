@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analytics for @{{ username }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static_files', filename='style.css') }}">
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Debug info -->
+        {% if not stats %}
+        <div class="alert alert-warning">
+            No stats available
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">Analytics for @{{ username }}</h1>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-light">Back</a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <div class="engagement-number">
+                            {{ stats.get('tweet_activity', {}).get('total_tweets', 0) }}
+                        </div>
+                        <div class="metric-label">Total Tweets Analyzed</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <div class="engagement-number">
+                            {{ stats.get('engagement', {}).get('total', 0) }}
+                        </div>
+                        <div class="metric-label">Total Engagement</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <div class="engagement-number">
+                            {{ stats.get('engagement', {}).get('average', 0) }}
+                        </div>
+                        <div class="metric-label">Avg. Engagement</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tweet Activity -->
+        <div class="card mb-4">
+            <div class="card-header"><h3>Tweet Activity</h3></div>
+            <div class="card-body">
+                <p>Total tweets analyzed: {{ stats.get('tweet_activity', {}).get('total_tweets', 0) }}</p>
+                <p>Date range: {{ stats.get('tweet_activity', {}).get('date_range', 'N/A') }}</p>
+            </div>
+        </div>
+
+        <!-- Engagement Stats -->
+        <div class="card mb-4">
+            <div class="card-header"><h3>Engagement Metrics</h3></div>
+            <div class="card-body">
+                <p>Total engagement: {{ stats.get('engagement', {}).get('total', 0) }}</p>
+                <p>Average engagement per tweet: {{ stats.get('engagement', {}).get('average', 0) }}</p>
+                <p>Peak engagement: {{ stats.get('engagement', {}).get('peak', 0) }}</p>
+            </div>
+        </div>
+
+        <!-- Content Analysis -->
+        <div class="card mb-4">
+            <div class="card-header"><h3>Content Analysis</h3></div>
+            <div class="card-body">
+                <p>Tweets with hashtags: {{ stats.get('content_analysis', {}).get('hashtags_percentage', 0) }}%</p>
+                <p>Tweets with mentions: {{ stats.get('content_analysis', {}).get('mentions_percentage', 0) }}%</p>
+                <p>Tweets with links: {{ stats.get('content_analysis', {}).get('links_percentage', 0) }}%</p>
+                <p>Tweets with media: {{ stats.get('content_analysis', {}).get('media_percentage', 0) }}%</p>
+                <p>Average word count: {{ stats.get('content_analysis', {}).get('avg_word_count', 0) }}</p>
+            </div>
+        </div>
+
+        <!-- Posting Times Analysis -->
+        {% if stats.posting_patterns %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Best Times to Post</h3>
+            </div>
+            <div class="card-body">
+                {% if stats.posting_patterns.overall %}
+                <div class="alert alert-info">
+                    <strong>Optimal Posting Time:</strong> {{ stats.posting_patterns.overall.optimal_post_time }}
+                </div>
+                {% endif %}
+
+                <!-- Daily Stats -->
+                {% if stats.posting_patterns.days and stats.posting_patterns.days.ranked %}
+                <h4>Daily Performance</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Avg Engagement</th>
+                                <th>Success Rate</th>
+                                <th>Tweet Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day, day_stat in stats.posting_patterns.days.ranked %}
+                            <tr>
+                                <td>{{ day }}</td>
+                                <td>{{ stats.posting_patterns.days.stats[day].mean_engagement }}</td>
+                                <td>{{ stats.posting_patterns.days.stats[day].success_rate }}%</td>
+                                <td>{{ stats.posting_patterns.days.stats[day].tweet_count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                <!-- Hourly Stats -->
+                {% if stats.posting_patterns.hours and stats.posting_patterns.hours.stats %}
+                <h4>Hourly Performance</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Time Range</th>
+                                <th>Avg Engagement</th>
+                                <th>Success Rate</th>
+                                <th>Tweet Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for time_range, hour_stat in stats.posting_patterns.hours.stats.items() %}
+                            <tr>
+                                <td>{{ time_range }}</td>
+                                <td>{{ hour_stat.mean_engagement }}</td>
+                                <td>{{ hour_stat.success_rate }}%</td>
+                                <td>{{ hour_stat.tweet_count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Visualizations with improved styling -->
+        {% if heatmap or wordcloud %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="h5 mb-0">Visualizations</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% if heatmap %}
+                    <div class="col-12 col-lg-6 mb-4">
+                        <img src="{{ url_for('static_files', filename=heatmap) }}" 
+                             class="img-fluid rounded" 
+                             alt="Engagement Heatmap">
+                    </div>
+                    {% endif %}
+                    {% if wordcloud %}
+                    <div class="col-12 col-lg-6 mb-4">
+                        <img src="{{ url_for('static_files', filename=wordcloud) }}" 
+                             class="img-fluid rounded" 
+                             alt="Word Cloud">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Recent Tweets with improved card design -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="h5 mb-0">Recent Tweets</h3>
+            </div>
+            <div class="card-body p-0">
+                {% for tweet in recent_tweets %}
+                <div class="p-3 border-bottom">
+                    <p class="mb-2">{{ tweet.Tweet }}</p>
+                    <div class="d-flex gap-3 text-muted small">
+                        <span>{{ tweet.Date }}</span>
+                        <span>💬 {{ tweet.Replies }}</span>
+                        <span>🔁 {{ tweet.Retweets }}</span>
+                        <span>❤️ {{ tweet.Likes }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

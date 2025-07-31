@@ -1,0 +1,141 @@
+:root {
+    --dark-bg: #1a1a1a;
+    --dark-card: #242424;
+    --dark-text: #e0e0e0;
+    --dark-border: #333;
+    --accent: #4f46e5;
+    --success: #22c55e;
+}
+
+body {
+    background-color: var(--dark-bg) !important;
+    color: var(--dark-text) !important;
+}
+
+.card {
+    background-color: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.table {
+    color: var(--dark-text);
+}
+
+.table td, .table th {
+    border-color: var(--dark-border);
+}
+
+.text-muted {
+    color: #9ca3af !important;
+}
+
+.stats-card {
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.engagement-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+.bg-dark-subtle {
+    background-color: var(--dark-card) !important;
+    border-color: var(--dark-border) !important;
+}
+
+.list-group-item {
+    border-color: var(--dark-border) !important;
+    transition: all 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.input-group-text {
+    background-color: var(--dark-card);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+.form-control {
+    background-color: var(--dark-card);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+.form-control:focus {
+    background-color: var(--dark-card);
+    border-color: var(--accent);
+    color: var(--dark-text);
+    box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+}
+
+/* Comparison Styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.stat-item {
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.progress-stat label {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--dark-text);
+    font-size: 0.875rem;
+}
+
+.progress {
+    height: 0.5rem;
+    background: rgba(0,0,0,0.2);
+}
+
+.progress-bar {
+    background: var(--accent);
+    font-size: 0.75rem;
+    line-height: 0.5rem;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
